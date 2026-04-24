@@ -1,0 +1,10 @@
+Data/
+Manuscript/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+Thumbs.db
+Figure_Generation_Codes/.mplconfig/
+Local_LLM_for_extraction/extractor_output/
