@@ -8,7 +8,7 @@ The analysis dataset and manuscript source files are not public in this reposito
 
 - Figure-generation scripts used to produce the visual summaries in the study
 - Rendered figure files and figure source documents
-- A local large-language-model extraction pipeline for structured paper metadata extraction
+- A local PDF Data extraction pipeline for structured paper metadata extraction
 - Project-level documentation for reproducing the code-side workflow once data access is granted
 
 ## What is not included
@@ -24,7 +24,7 @@ Both directories are excluded from version control for privacy and publication-c
 - `Figures/`: exported figure panels used in the project
 - `Figure_seperate_files/`: individual figure documents
 - `Merged_figures/`: merged figure composites
-- `Local_LLM_for_extraction/`: standalone local PDF extraction pipeline and its documentation
+- `Genomewide_PDF_Local_Extractor/`: standalone local PDF extraction pipeline and its documentation
 
 ## Data access policy
 
@@ -55,9 +55,9 @@ Some scripts historically referenced `Data.csv`, `Data_cleaned.csv`, or `Data22.
 
 `Generate_Country_Origin_Map.py` expects a `world_countries.geojson` file for map rendering. That auxiliary file is not present in this public snapshot and should be supplied separately when reproducing the map.
 
-## Local LLM extraction workflow
+## Local data extraction workflow
 
-The extraction pipeline in `Local_LLM_for_extraction/` is documented separately in `Local_LLM_for_extraction/README.md`. In short, it:
+The extraction pipeline in `Genomewide_PDF_Local_Extractor/` is documented separately in `Genomewide_PDF_Local_Extractor/README.md`. In short, it:
 
 - extracts text from research-paper PDFs
 - applies rule-based heuristics to recover structured metadata
