@@ -5,6 +5,7 @@
 [![No API Required](https://img.shields.io/badge/API-None%20required-green.svg)]()
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19821383.svg)](https://doi.org/10.5281/zenodo.19821383)
 
+
 A **fully local, zero-API** tool for extracting structured metadata from genome-wide gene family identification study PDFs. Designed for bioinformatics researchers performing systematic reviews or meta-analyses.
 
 ---
