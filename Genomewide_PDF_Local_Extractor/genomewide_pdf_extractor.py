@@ -1,12 +1,9 @@
 """
-genomewide_pdf_extractor.py
-=====================
 Genome-Wide Gene Family Study PDF Extractor
-A fully local, API-free tool for extracting structured metadata from
-genome-wide gene family identification study PDFs.
+A fully local, API-free tool for extracting structured metadata from genome-wide gene family identification study PDFs.
 
 MIT License
-Copyright (c) 2025
+Copyright (c) 2026
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,15 +23,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Usage
------
+Usage:
+
     python genomewide_pdf_extractor.py --input ./pdfs --output-dir ./results
 
-Dependencies (install via pip)
-------------------------------
+Dependencies (install via pip):
+
     pip install pdfplumber pypdf pandas openpyxl
 
-Optional (for Camelot table extraction – slower):
+Optional (for Camelot table extraction - slower):
     pip install camelot-py[cv] ghostscript
 
 Optional (for local LLM repair via Ollama):
@@ -56,34 +53,29 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable, Optional
 
-# ---------------------------------------------------------------------------
-# Optional dependency imports – graceful fallback if not installed
-# ---------------------------------------------------------------------------
+
+# Optional dependency imports (graceful fallback if not installed)
 
 try:
     import pdfplumber
 except ImportError:
-    pdfplumber = None  # type: ignore[assignment]
+    pdfplumber = None  
 
 try:
     from pypdf import PdfReader
 except ImportError:
-    PdfReader = None  # type: ignore[assignment]
+    PdfReader = None  
 
 try:
     import camelot
 except ImportError:
-    camelot = None  # type: ignore[assignment]
+    camelot = None  
 
 try:
     import pandas as pd
 except ImportError:
-    pd = None  # type: ignore[assignment]
+    pd = None
 
-
-# ===========================================================================
-# DOMAIN KNOWLEDGE: column schema, controlled vocabularies, known entities
-# ===========================================================================
 
 #: All output columns, in order.
 COLUMNS: list[str] = [
@@ -279,10 +271,7 @@ NUMBER_WORDS: dict[str, int] = {
     "ninety": 90, "hundred": 100,
 }
 
-
-# ===========================================================================
 # UTILITY HELPERS
-# ===========================================================================
 
 def ensure_dependencies() -> None:
     """Raise helpful RuntimeError if critical libraries are missing."""
@@ -299,7 +288,7 @@ def ensure_dependencies() -> None:
 def normalize_text(text: str) -> str:
     """Fix common PDF encoding artifacts and excessive whitespace."""
     _LIGATURES = {
-        "\u00a0": " ",   # non-breaking space
+        "\u00a0": " ",
         "\ufb00": "ff",  "\ufb01": "fi",  "\ufb02": "fl",
         "\ufb03": "ffi", "\ufb04": "ffl",
         "\u2010": "-",   "\u2011": "-",   "\u2012": "-",
@@ -309,7 +298,7 @@ def normalize_text(text: str) -> str:
     }
     for old, new in _LIGATURES.items():
         text = text.replace(old, new)
-    # Merge camelCase splits introduced by some PDF renderers
+
     text = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", text)
     text = re.sub(r"[ \t]+", " ", text)
     text = re.sub(r"\n{3,}", "\n\n", text)
@@ -371,17 +360,15 @@ def numeric_to_int(token: str) -> Optional[int]:
     return total if total else None
 
 
-# ===========================================================================
 # DATA STRUCTURES
-# ===========================================================================
 
 @dataclass
 class FieldResult:
     """Holds one extracted field's value plus quality metadata."""
     value: str
     confidence: float
-    evidence: str   # verbatim snippet that led to this value
-    source: str     # which part of the document was used
+    evidence: str 
+    source: str  
 
 
 @dataclass
@@ -411,10 +398,7 @@ class DocumentContext:
             ] if part
         ).strip()
 
-
-# ===========================================================================
 # LOCAL LLM HELPER (optional Ollama back-end)
-# ===========================================================================
 
 class OllamaHelper:
     """
@@ -458,9 +442,7 @@ class OllamaHelper:
         return clean_value(payload.get("response", ""))
 
 
-# ===========================================================================
 # MAIN EXTRACTOR CLASS
-# ===========================================================================
 
 class GenomicsExtractor:
     """
@@ -490,10 +472,9 @@ class GenomicsExtractor:
         self.ollama = OllamaHelper(ollama_model) if ollama_model else None
         self.ollama_enabled = bool(self.ollama and self.ollama.available())
 
-    # ------------------------------------------------------------------
-    # PDF TEXT EXTRACTION
-    # ------------------------------------------------------------------
 
+    # PDF TEXT EXTRACTION
+    
     def _reader_score(self, text: str) -> float:
         """
         Score a text extraction by heuristics (word density, noise ratio,
@@ -507,7 +488,8 @@ class GenomicsExtractor:
         score: float = sum(len(re.findall(r"[A-Za-z]{2,}", ln)) for ln in sample)
         score -= sum(1 for ln in sample if len(ln) <= 2) * 5
         score -= sum(1 for ln in sample if re.fullmatch(r"[A-Za-z]", ln)) * 8
-        # Reward domain-relevant signals
+
+        
         if any("gene family" in ln.lower() for ln in lines[:25]):
             score += 15
         if any(ln.lower() == "abstract" for ln in lines[:35]):
@@ -594,9 +576,9 @@ class GenomicsExtractor:
                 break
         return normalize_text("\n".join(snippets))
 
-    # ------------------------------------------------------------------
+   
     # DOCUMENT STRUCTURE
-    # ------------------------------------------------------------------
+    
 
     def _lines(self, text: str, limit: Optional[int] = None) -> list[str]:
         """Return non-empty, stripped lines from text."""
@@ -638,9 +620,8 @@ class GenomicsExtractor:
             sections=self._split_sections(combined),
         )
 
-    # ------------------------------------------------------------------
+
     # EVIDENCE EXTRACTION HELPERS
-    # ------------------------------------------------------------------
 
     def _evidence(self, text: str, patterns: Iterable[str]) -> str:
         """Return the first matching line snippet (max 220 chars)."""
@@ -684,9 +665,9 @@ class GenomicsExtractor:
         line = re.sub(r"\s+", " ", line)
         return line.strip(" ,;")
 
-    # ------------------------------------------------------------------
+    
     # FIELD-SPECIFIC EXTRACTORS
-    # ------------------------------------------------------------------
+    
 
     def extract_title(self, first_page_text: str) -> str:
         """Identify the paper title from the first page."""
@@ -1038,9 +1019,8 @@ class GenomicsExtractor:
             else "No"
         )
 
-    # ------------------------------------------------------------------
     # CONFIDENCE SCORING
-    # ------------------------------------------------------------------
+    
 
     def _confidence(self, field: str, value: str) -> float:
         """
@@ -1097,9 +1077,7 @@ class GenomicsExtractor:
             score += 0.15
         return round(max(0.0, min(1.0, score)), 2)
 
-    # ------------------------------------------------------------------
     # RESULT FACTORY
-    # ------------------------------------------------------------------
 
     def _make_result(
         self,
@@ -1116,9 +1094,7 @@ class GenomicsExtractor:
             source=source,
         )
 
-    # ------------------------------------------------------------------
     # OPTIONAL LOCAL LLM REPAIR
-    # ------------------------------------------------------------------
 
     def _llm_repair(
         self, field: str, ctx: DocumentContext, current: FieldResult
@@ -1155,9 +1131,8 @@ class GenomicsExtractor:
         repaired = self._make_result(field, answer, evidence_block, "ollama", [field])
         return repaired if repaired.confidence > current.confidence else current
 
-    # ------------------------------------------------------------------
+   
     # MAIN EXTRACTION PIPELINE
-    # ------------------------------------------------------------------
 
     def extract_fields(self, ctx: DocumentContext) -> dict[str, FieldResult]:
         """
@@ -1378,10 +1353,9 @@ class GenomicsExtractor:
             "needs_review": "Yes" if low else "No",
         }
 
-    # ------------------------------------------------------------------
-    # BATCH PROCESSING
-    # ------------------------------------------------------------------
 
+    # BATCH PROCESSING
+    
     def process_directory(
         self,
         input_dir: Path,
@@ -1601,9 +1575,7 @@ class GenomicsExtractor:
         print(f"Saved paper summary: {summary_csv}")
         print(f"Saved evidence    : {evidence_jsonl}")
 
-# ===========================================================================
 # CLI
-# ===========================================================================
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
