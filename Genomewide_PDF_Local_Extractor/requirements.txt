@@ -1,0 +1,22 @@
+# genomics_extractor.py — Python dependencies
+# Install with: pip install -r requirements.txt
+
+# ── Core (required) ──────────────────────────────────────────────────────────
+pdfplumber>=0.10.0        # Primary PDF text extractor (recommended)
+pypdf>=4.0.0              # Fallback PDF reader and first-page extraction
+pandas>=2.0.0             # DataFrame construction and CSV/XLSX output
+openpyxl>=3.1.0           # Required by pandas for .xlsx output (--excel flag)
+
+# ── Optional: table extraction ───────────────────────────────────────────────
+# Camelot extracts text from PDF tables (lattice & stream modes).
+# Also requires Ghostscript on your system:
+#   Ubuntu/Debian : sudo apt-get install ghostscript
+#   macOS         : brew install ghostscript
+#   Windows       : https://www.ghostscript.com/releases/gsdnld.html
+#
+# camelot-py[cv]>=0.11.0
+
+# ── Optional: local LLM repair via Ollama ────────────────────────────────────
+# No Python package needed. Install Ollama from https://ollama.com then:
+#   ollama pull qwen2.5:7b
+# Pass --ollama-model qwen2.5:7b when running the extractor.
