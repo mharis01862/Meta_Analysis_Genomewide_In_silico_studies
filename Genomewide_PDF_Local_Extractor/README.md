@@ -240,7 +240,7 @@ JOURNAL_HINTS: list[str] = [
 
 - Extraction accuracy depends on PDF text quality. Scanned/image-only PDFs will return mostly empty fields (consider running OCR first, e.g. with `ocrmypdf`).
 - Multi-column PDF layouts may cause text to be extracted in reading order across columns, which can confuse section detection.
-- The tool is tuned for plant genomics papers; animal/fungal studies are supported but the species and gene family lists are less comprehensive.
+- The tool is tuned for plant genomics papers; animal/fungal studies are supported, but the species and gene family lists are less comprehensive.
 
 ---
 
@@ -249,9 +249,7 @@ JOURNAL_HINTS: list[str] = [
 If you use this tool in your research, please cite:
 
 ```
-[Your Name] (2025). Genome-Wide PDF Extractor: A local tool for structured
-metadata extraction from genome-wide gene family study PDFs.
-GitHub: https://github.com/YOUR_USERNAME/genomewide-pdf-extractor
+Muhammad, H. (2026). Genome-Wide PDF Extractor: A local tool for structured data extraction from genome-wide gene family study PDFs (v1.1.0). Zenodo. https://doi.org/10.5281/zenodo.19821383
 ```
 
 ---
