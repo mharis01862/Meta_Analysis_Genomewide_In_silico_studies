@@ -1,8 +1,9 @@
 # Meta-Analysis of Genome-Wide In Silico Studies
+[![DOI](https://zenodo.org/badge/1220420681.svg)](https://doi.org/10.5281/zenodo.19747514)
 
 This repository contains the code, generated figures, and supporting project materials for a meta-analysis focused on genome-wide in silico studies. The public repository is intentionally limited to publishable project assets only.
 
-The analysis dataset and manuscript source files are not public in this repository. The underlying data contain non-public research materials and are available upon reasonable request from the project owner.
+The analysis dataset and manuscript source files are not publicly available in this repository. The underlying data contain non-public research materials and are available upon reasonable request from the project owner.
 
 ## What is included
 
